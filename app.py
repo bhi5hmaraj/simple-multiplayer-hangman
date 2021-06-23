@@ -38,7 +38,7 @@ def home():
 @app.route('/propose')
 def propose():
     print("session ", session, session["room_id"])
-    word = request.args.get('word', '')
+    word = request.args.get('word', '').upper()
     Room = Query()
     ran = ''.join(random.choices(
         string.ascii_uppercase + string.digits, k=5))
@@ -57,18 +57,19 @@ def guess():
     if r_id:
         room_data = db.search(Room.room_id == r_id)[0]
         print(room_data)
-        l = request.args.get('guessletter', '')
+        l = request.args.get('guessletter', '').upper()
         ret = ''
         updated_guess = room_data['guess'] + l
         word = room_data['word']
 
         if (set(word).issubset(set(updated_guess))):
+            db.remove(Room.room_id == r_id)
             ret = WIN_HTML.format(word)
         elif len(updated_guess) == MAX_TRIES:   # Last try
             db.remove(Room.room_id == r_id)
             ret = GAME_OVER_HTML.format(word)
         else:
-            masked_word = ' - '.join(
+            masked_word = ' | '.join(
                 map(lambda ch: ch if ch in updated_guess else '?', word))
             db.update({'guess': updated_guess}, Room.room_id == r_id)
             ret = GUESS_HTML.format(
@@ -79,7 +80,7 @@ def guess():
     if request.method == "POST":    # First time
         session["room_id"] = request.form.get("roomid")
         room_data = db.search(Room.room_id == session["room_id"])[0]
-        return GUESS_HTML.format(session["room_id"], ' - '.join(('?' * len(room_data['word']))), MAX_TRIES, '')
+        return GUESS_HTML.format(session["room_id"], ' | '.join(('?' * len(room_data['word']))), MAX_TRIES, '')
 
 
 HOME_HTML = """
