@@ -140,4 +140,4 @@ WIN_HTML = """
 if __name__ == "__main__":
  # Launch the Flask dev server
     # app.run(host="localhost", debug=True)
-    app.run(debug=True)
+    app.run(port=33507, debug=True)
