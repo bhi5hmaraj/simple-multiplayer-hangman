@@ -3,6 +3,7 @@ cachelib==0.1.1
 click==8.0.1
 Flask==1.1.2
 Flask-Session==0.3.2
+gunicorn==20.1.0
 itsdangerous==2.0.1
 Jinja2==3.0.1
 MarkupSafe==2.0.1
